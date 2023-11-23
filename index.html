@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Random Number Generator</title>
+    <style>
+        body {
+            background-color: #282c34;
+            color: #61dafb;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            background-color: #61dafb;
+            border: none;
+            color: #282c34;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        #numbers {
+            position: relative;
+            min-height: 300px;
+            width: 80%;
+            border: 1px solid #61dafb;
+        }
+        .number {
+            position: relative;
+            width: 30px;
+            color: #282c34;
+            background-color: #61dafb;
+            text-align: center;
+            line-height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Random Number Generator for Addition Practice</h1>
+    <label for="numDigits">Number of Digits:</label>
+    <input type="number" id="numDigits" name="numDigits" min="1" max="3" value="2">
+    <br><br>
+    <div id="numbers"></div>
+    <br>
+    <span class="slider_txt">Value: <span id="numValue"></span></span>
+    <input class="slider" type="range" id="numSlider" name="numSlider" min="5" max="30" value="15">
+    <br><br>
+    <button onclick="generateNumbers()">Generate Numbers</button>
+    <button onclick="showAnswer()">Show Answer</button>
+    <button onclick="randomizePosition()">Randomize Position</button>
+    <p id="answer"></p>
+
+    <script>
+        var slider = document.getElementById("numSlider");
+        var output = document.getElementById("numValue");
+        output.innerHTML = slider.value; // Display the default slider value
+
+        // Update the current slider value (each time you drag the slider handle)
+        slider.oninput = function () {
+            output.innerHTML = this.value;
+        };
+        var sum = 0;
+        var numbersArray = [];
+
+        function generateNumbers() {
+            var numbers = "";
+            sum = 0;
+            numbersArray = [];
+            var numDigits = document.getElementById("numDigits").value;
+            for (var i = 0; i < slider.value; i++) {
+                var num = generateRandomNumber(numDigits);
+                numbers += "<div class='number'>" + num + "</div>";
+                sum += num;
+                numbersArray.push(num);
+            }
+            document.getElementById("numbers").innerHTML = "<b>" +numbers+"</b>";
+            document.getElementById("answer").innerHTML = "";
+        }
+
+        function generateRandomNumber(numDigits) {
+            var min = Math.pow(10, numDigits - 1);
+            var max = Math.pow(10, numDigits) - 1;
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function showAnswer() {
+            document.getElementById("answer").innerHTML = "Answer: <b>" + sum+"</b>";
+        }
+
+        function randomizePosition() {
+            var numbers = document.getElementsByClassName("number");
+            var container = document.getElementById("numbers");
+            for (var i = 0; i < numbers.length; i++) {
+                numbers[i].style.position = "absolute";
+            }
+            for (var i = 0; i < numbers.length; i++) {
+                var width = numbers[i].offsetWidth;
+                var height = numbers[i].offsetHeight;
+
+                var randomTop, randomLeft;
+                var collision;
+
+                do {
+                    randomTop = Math.random() * (container.offsetHeight - height);
+                    randomLeft = Math.random() * (container.offsetWidth - width);
+                    collision = checkCollision(numbers, i, randomTop, randomLeft, height, width);
+                } while (collision);
+
+                numbers[i].style.top = randomTop + "px";
+                numbers[i].style.left = randomLeft + "px";
+            }
+        }
+
+        function checkCollision(numbers, currentIndex, top, left, height, width) {
+            for (var j = 0; j < numbers.length; j++) {
+                if (j !== currentIndex) {
+                    var otherTop = parseFloat(numbers[j].style.top);
+                    var otherLeft = parseFloat(numbers[j].style.left);
+                    var otherHeight = numbers[j].offsetHeight;
+                    var otherWidth = numbers[j].offsetWidth;
+
+                    if (
+                        top < otherTop + otherHeight &&
+                        top + height > otherTop &&
+                        left < otherLeft + otherWidth &&
+                        left + width > otherLeft
+                    ) {
+                        // Colliding with another number
+                        return true;
+                    }
+                }
+            }
+
+            // No collision
+            return false;
+        }
+    </script>
+</body>
+</html>
