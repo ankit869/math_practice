@@ -105,7 +105,7 @@
 
      
     <!-- Records display -->
-    <h2>Timer Records <button onclick="shiftRecords()"><b>Clear Record</button></h2>
+    <h2>Timer Records <button onclick="popRecords()"><b>Clear Record</button></h2>
     <ul id="timerRecords"></ul>
 
 
@@ -232,12 +232,12 @@
             displayRecords([]);
         }
         
-        function shiftRecords() {
+        function popRecords() {
             var records = JSON.parse(localStorage.getItem('timerRecords')) || [];
 
             if (records.length > 0) {
-                // Remove the first record
-                records.shift();
+                // Remove the last record
+                records.pop();
 
                 // Save the updated records back to localStorage
                 localStorage.setItem('timerRecords', JSON.stringify(records));
